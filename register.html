@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container" style="max-width: 1400px;">
+    <div class="dashboard-grid">
+        <!-- LEFT SIDE: Cook With My Ingredients -->
+        <div class="dashboard-panel glass">
+            <h2 style="margin-bottom: 1.5rem; color: var(--primary-color);">🥕 Cook With My Ingredients</h2>
+            <form method="get" action="{% url 'dashboard' %}" style="margin-bottom: 2rem;">
+                <div class="form-group">
+                    <label>What's in your fridge?</label>
+                    <input type="text" name="ingredients" class="form-control"
+                        placeholder="tomato, onion, spinach, rice" value="{{ requested_ingredients }}">
+                    <small style="color: #888;">Enter ingredients separated by commas</small>
+                </div>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <button type="submit" class="btn btn-primary">Find Recipes</button>
+                    {% if requested_ingredients %}
+                    <a href="{% url 'dashboard' %}"
+                        style="color: var(--primary-color); font-size: 0.9rem; text-decoration: none;">✕ Clear</a>
+                    {% endif %}
+                </div>
+            </form>
+
+            <div class="results">
+                {% if matched_recipes %}
+                {% for item in matched_recipes %}
+                <div class="recipe-card glass" style="flex-direction: column; align-items: start; gap: 1rem;">
+                    <div style="display: flex; gap: 1.5rem; width: 100%;">
+                        {% if item.recipe.image %}
+                        <img src="{{ item.recipe.image.url }}" class="recipe-image"
+                            style="width: 100px; height: 100px;">
+                        {% else %}
+                        <div class="recipe-image"
+                            style="width: 100px; height: 100px; background: #333; display: flex; align-items: center; justify-content: center;">
+                            🍳</div>
+                        {% endif %}
+                        <div style="flex: 1;">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <h3>{{ item.recipe.name }}</h3>
+                                <span class="match-badge">{{ item.match_percentage }}% Match</span>
+                            </div>
+                            <p style="color: var(--accent-color); font-size: 0.9rem; margin-top: 0.5rem;">🕒 Prep: {{
+                                item.recipe.prep_time }} mins</p>
+                        </div>
+                    </div>
+
+                    <div style="width: 100%;">
+                        <h4 style="margin-bottom: 0.5rem;">Ingredients:</h4>
+                        <ul style="margin-left: 1.5rem; font-size: 0.9rem; color: #ccc;">
+                            {% for ing in item.recipe.ingredients.all %}
+                            <li>{{ ing.quantity }} {{ ing.name }}</li>
+                            {% endfor %}
+                        </ul>
+                        <h4 style="margin-top: 1rem; margin-bottom: 0.5rem;">Steps:</h4>
+                        <p style="font-size: 0.9rem; color: #ccc;">{{ item.recipe.instructions|linebreaksbr }}</p>
+
+                        <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                            <a href="{% url 'recipe_detail' item.recipe.id %}" class="btn btn-secondary"
+                                style="font-size: 0.8rem;">Full Page View</a>
+                            <button class="btn btn-primary"
+                                style="background: var(--accent-color); color: black; font-size: 0.8rem;">Save to
+                                Favorites</button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% elif requested_ingredients %}
+                <p style="text-align: center; color: #888;">No matches found. Try adding more ingredients!</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- RIGHT SIDE: Search Recipe -->
+        <div class="dashboard-panel glass">
+            <h2 style="margin-bottom: 1.5rem; color: var(--secondary-color);">🔍 Search Recipe</h2>
+            <form method="get" action="{% url 'dashboard' %}" style="margin-bottom: 2rem;">
+                <div class="form-group">
+                    <div style="display: flex; gap: 1rem;">
+                        <input type="text" name="search" class="form-control"
+                            placeholder="Search for a recipe (e.g. Paneer Butter Masala)" value="{{ search_query }}">
+                        <button type="submit" class="btn btn-secondary">Search</button>
+                    </div>
+                </div>
+                {% if search_query %}
+                <a href="{% url 'dashboard' %}"
+                    style="color: var(--secondary-color); font-size: 0.9rem; text-decoration: none;">✕ Clear search</a>
+                {% endif %}
+            </form>
+
+            <div class="results">
+                {% if searched_recipes %}
+                {% for recipe in searched_recipes %}
+                <div class="recipe-card glass" style="flex-direction: column; align-items: start; gap: 1rem;">
+                    <div style="display: flex; gap: 1.5rem; width: 100%;">
+                        {% if recipe.image %}
+                        <img src="{{ recipe.image.url }}" class="recipe-image" style="width: 100px; height: 100px;">
+                        {% else %}
+                        <div class="recipe-image"
+                            style="width: 100px; height: 100px; background: #333; display: flex; align-items: center; justify-content: center;">
+                            🥘</div>
+                        {% endif %}
+                        <div>
+                            <h3>{{ recipe.name }}</h3>
+                            <p style="color: var(--accent-color);">🕒 Prep Time: {{ recipe.prep_time }} mins</p>
+                        </div>
+                    </div>
+
+                    <div style="width: 100%;">
+                        <h4 style="margin-bottom: 0.5rem;">Ingredients:</h4>
+                        <ul style="margin-left: 1.5rem; font-size: 0.9rem; color: #ccc;">
+                            {% for ing in recipe.ingredients.all %}
+                            <li>{{ ing.quantity }} {{ ing.name }}</li>
+                            {% endfor %}
+                        </ul>
+                        <h4 style="margin-top: 1rem; margin-bottom: 0.5rem;">Steps:</h4>
+                        <p style="font-size: 0.9rem; color: #ccc;">{{ recipe.instructions|linebreaksbr }}</p>
+
+                        <div style="margin-top: 1.5rem;">
+                            <button class="btn btn-primary" style="background: var(--accent-color); color: black;">Save
+                                to Favorites</button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% elif search_query %}
+                <p style="text-align: center; color: #888;">No recipes found for "{{ search_query }}".</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

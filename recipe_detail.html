@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="glass" style="padding: 2rem; margin-top: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h2>👨‍💻 Developer Dashboard</h2>
+            <a href="{% url 'add_recipe' %}" class="btn btn-primary">+ Add New Recipe</a>
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr style="border-bottom: 1px solid var(--glass-border);">
+                        <th style="padding: 1rem;">Recipe Name</th>
+                        <th style="padding: 1rem;">Prep Time</th>
+                        <th style="padding: 1rem;">Created At</th>
+                        <th style="padding: 1rem;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for recipe in recipes %}
+                    <tr style="border-bottom: 1px solid var(--glass-border);">
+                        <td style="padding: 1rem; display: flex; align-items: center; gap: 1rem;">
+                            {% if recipe.image %}
+                            <img src="{{ recipe.image.url }}"
+                                style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;">
+                            {% else %}
+                            <div
+                                style="width: 40px; height: 40px; background: #333; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                🍳</div>
+                            {% endif %}
+                            {{ recipe.name }}
+                        </td>
+                        <td style="padding: 1rem;">{{ recipe.prep_time }} mins</td>
+                        <td style="padding: 1rem;">{{ recipe.created_at|date:"M d, Y" }}</td>
+                        <td style="padding: 1rem; display: flex; gap: 0.5rem;">
+                            <a href="{% url 'edit_recipe' recipe.id %}" class="btn btn-secondary"
+                                style="font-size: 0.8rem; padding: 0.4rem 0.8rem;">Edit</a>
+                            <form method="post" action="{% url 'delete_recipe' recipe.id %}"
+                                onsubmit="return confirm('Are you sure?')">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary"
+                                    style="font-size: 0.8rem; padding: 0.4rem 0.8rem; background: #ff4757;">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" style="padding: 2rem; text-align: center; color: #888;">No recipes found. Start
+                            by adding one!</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

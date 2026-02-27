@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="glass" style="padding: 3rem; max-width: 800px; margin: 3rem auto;">
+        <h2 style="margin-bottom: 2rem;">{% if recipe %}Edit Recipe: {{ recipe.name }}{% else %}Add New Recipe{% endif
+            %}</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Recipe Name</label>
+                <input type="text" name="name" class="form-control" value="{{ recipe.name }}" required>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" class="form-control" rows="3" required>{{ recipe.description }}</textarea>
+            </div>
+            <div class="form-group">
+                <label>Preparation Time (minutes)</label>
+                <input type="number" name="prep_time" class="form-control" value="{{ recipe.prep_time }}" required>
+            </div>
+            <div class="form-group">
+                <label>Cooking Steps (Numbered)</label>
+                <textarea name="instructions" class="form-control" rows="6"
+                    required>{{ recipe.instructions }}</textarea>
+            </div>
+            <div class="form-group">
+                <label>Recipe Image</label>
+                <input type="file" name="image" class="form-control">
+            </div>
+
+            <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-primary">Save Recipe</button>
+                <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary"
+                    style="background: transparent; border: 1px solid var(--glass-border);">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

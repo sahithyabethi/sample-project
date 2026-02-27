@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Recipe Meal Planner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <navbar class="glass">
+        <div class="logo">SmartRecipe</div>
+        <ul class="nav-links">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            {% if user.is_authenticated %}
+                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                {% if user.is_staff %}
+                    <li><a href="{% url 'admin_dashboard' %}">Admin</a></li>
+                {% endif %}
+                <li><a href="{% url 'logout' %}" class="btn btn-secondary" style="padding: 0.5rem 1rem;">Logout</a></li>
+            {% else %}
+                <li><a href="{% url 'login' %}">Login</a></li>
+                <li><a href="{% url 'register' %}" class="btn btn-primary" style="padding: 0.5rem 1rem;">Sign Up</a></li>
+            {% endif %}
+        </ul>
+    </navbar>
+
+    <div class="messages">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}" style="text-align: center; padding: 1rem; background: var(--secondary-color); color: white;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    {% block content %}{% endblock %}
+
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+import os
+import django
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'smart_recipe_planner.settings')
+django.setup()
+
+from recipes.models import Recipe, Ingredient
+from django.contrib.auth.models import User
+
+def seed_data():
+    # Create Superuser if not exists
+    if not User.objects.filter(username='admin').exists():
+        User.objects.create_superuser('admin', 'admin@example.com', 'admin123')
+        print("Superuser 'admin' created (pass: admin123)")
+
+    # Create dummy user
+    if not User.objects.filter(username='user').exists():
+        User.objects.create_user('user', 'user@example.com', 'user123')
+        print("Demo user 'user' created (pass: user123)")
+
+    # Initial Recipes
+    recipes_data = [
+        {
+            'name': 'Paneer Butter Masala',
+            'description': 'A rich and creamy tomato-based curry with paneer cubes.',
+            'prep_time': 30,
+            'instructions': '1. Heat oil and butter in a pan.\n2. Add ginger-garlic paste and onions.\n3. Add tomato puree and spices.\n4. Cook until oil separates.\n5. Add paneer cubes and cream.\n6. Garnish with coriander.',
+            'ingredients': [
+                {'name': 'paneer', 'quantity': '200g'},
+                {'name': 'tomato', 'quantity': '3 medium'},
+                {'name': 'onion', 'quantity': '2 medium'},
+                {'name': 'butter', 'quantity': '2 tbsp'},
+                {'name': 'cream', 'quantity': '1/4 cup'}
+            ]
+        },
+        {
+            'name': 'Tomato Spinach Pasta',
+            'description': 'Simple and healthy pasta with fresh spinach and tomatoes.',
+            'prep_time': 20,
+            'instructions': '1. Boil pasta according to package instructions.\n2. Sauté garlic and onions in olive oil.\n3. Add chopped tomatoes and cook till soft.\n4. Stir in fresh spinach until wilted.\n5. Mix in the pasta and season with salt and pepper.',
+            'ingredients': [
+                {'name': 'pasta', 'quantity': '250g'},
+                {'name': 'spinach', 'quantity': '100g'},
+                {'name': 'tomato', 'quantity': '2 large'},
+                {'name': 'garlic', 'quantity': '3 cloves'},
+                {'name': 'olive oil', 'quantity': '1 tbsp'}
+            ]
+        },
+        {
+            'name': 'Vegetable Fried Rice',
+            'description': 'Quick stir-fry rice with colorful vegetables.',
+            'prep_time': 15,
+            'instructions': '1. Heat oil in a wok.\n2. Add chopped onions, carrots, and peas.\n3. Stir fry on high heat.\n4. Add cooked rice and soy sauce.\n5. Mix well and serve hot.',
+            'ingredients': [
+                {'name': 'rice', 'quantity': '2 cups cooked'},
+                {'name': 'onion', 'quantity': '1 small'},
+                {'name': 'carrot', 'quantity': '1 medium'},
+                {'name': 'peas', 'quantity': '1/2 cup'},
+                {'name': 'soy sauce', 'quantity': '1 tbsp'}
+            ]
+        },
+        {
+            'name': 'Chicken Curry',
+            'description': 'A traditional and flavorful chicken curry.',
+            'prep_time': 45,
+            'instructions': '1. Heat oil and sauté onions, ginger, and garlic.\n2. Add chicken pieces and brown them.\n3. Stir in tomatoes and spices.\n4. Simmer until the chicken is cooked through.\n5. Garnish with fresh cilantro.',
+            'ingredients': [
+                {'name': 'chicken', 'quantity': '500g'},
+                {'name': 'onion', 'quantity': '2 large'},
+                {'name': 'tomato', 'quantity': '2 medium'},
+                {'name': 'ginger-garlic paste', 'quantity': '1 tbsp'},
+                {'name': 'curry powder', 'quantity': '2 tbsp'}
+            ]
+        },
+        {
+            'name': 'Grilled Chicken Salad',
+            'description': 'Healthy and fresh salad with grilled chicken strips.',
+            'prep_time': 25,
+            'instructions': '1. Season chicken breast with salt and pepper.\n2. Grill until fully cooked and slice into strips.\n3. Toss lettuce, tomatoes, and cucumbers in a bowl.\n4. Add chicken strips on top.\n5. Drizzle with olive oil and lemon juice.',
+            'ingredients': [
+                {'name': 'chicken breast', 'quantity': '200g'},
+                {'name': 'lettuce', 'quantity': '1 head'},
+                {'name': 'tomato', 'quantity': '1 large'},
+                {'name': 'cucumber', 'quantity': '1 medium'},
+                {'name': 'olive oil', 'quantity': '1 tbsp'}
+            ]
+        }
+    ]
+
+    for data in recipes_data:
+        if not Recipe.objects.filter(name=data['name']).exists():
+            recipe = Recipe.objects.create(
+                name=data['name'],
+                description=data['description'],
+                prep_time=data['prep_time'],
+                instructions=data['instructions']
+            )
+            for ing in data['ingredients']:
+                Ingredient.objects.create(recipe=recipe, name=ing['name'], quantity=ing['quantity'])
+            print(f"Added recipe: {recipe.name}")
+
+if __name__ == '__main__':
+    seed_data()

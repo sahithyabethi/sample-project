@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container" style="text-align: center; margin-top: 10vh;">
+    <div class="glass" style="padding: 4rem; max-width: 800px; margin: 0 auto;">
+        <h1 style="font-size: 3.5rem; margin-bottom: 1.5rem; font-weight: 800;">Plan Your Meals <br> <span
+                style="color: var(--secondary-color);">Smartly.</span></h1>
+        <p style="font-size: 1.2rem; color: #ccc; margin-bottom: 2.5rem;">The ultimate kitchen assistant that finds
+            recipes based on what you already have in your fridge.</p>
+        <div style="display: flex; gap: 1.5rem; justify-content: center;">
+            <a href="{% url 'register' %}" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem;">Get
+                Started</a>
+            <a href="{% url 'login' %}" class="btn btn-secondary"
+                style="padding: 1rem 2rem; font-size: 1.1rem; background: transparent; border: 1px solid var(--secondary-color);">Login</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
